@@ -1,0 +1,17 @@
+lakekeeper:
+  catalog:
+    image:
+      tag: latest-main
+    extraEnvFrom:
+      - secretRef:
+          name: lakekeeper-custom-secrets #overwrite the external database credentials with our own settings
+  postgresql:
+    enabled: false
+
+  externalDatabase:
+    type: postgresql
+    host_read: # used from lakekeeper-custom-secrets
+    port: # used from lakekeeper-custom-secrets
+    user: # used from lakekeeper-custom-secrets
+    database: # used from lakekeeper-custom-secrets
+

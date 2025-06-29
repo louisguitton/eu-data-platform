@@ -1,0 +1,74 @@
+# Custom values for the Trino Helm chart
+# Values placed under the 'trino:' key will be passed to the subchart.
+trino:
+  additionalConfigProperties: []
+  envFrom:
+    - secretRef:
+        name: s3-credentials
+      prefix: S3_
+    - secretRef:
+        name: pg-credentials
+      prefix: PG_
+    - secretRef:
+        name: trino-oidc
+      prefix: OAUTH2_
+  server:
+    config:
+      authenticationType: OAUTH2
+  catalogs:
+    iceberg: |
+      connector.name=iceberg
+      iceberg.catalog.type=rest
+      iceberg.rest-catalog.uri=http://lakekeeper.services.svc.cluster.local:8181/catalog
+      iceberg.rest-catalog.warehouse=dataminded
+      fs.native-s3.enabled=true
+      s3.endpoint=${ENV:S3_ENDPOINT}
+      s3.region=${ENV:S3_REGION}
+      s3.aws-access-key=${ENV:S3_ACCESS_KEY_ID}
+      s3.aws-secret-key=${ENV:S3_SECRET_ACCESS_KEY}
+      iceberg.rest-catalog.security=NONE
+      iceberg.rest-catalog.vended-credentials-enabled=true
+#      connector.name=iceberg
+#      iceberg.catalog.type=jdbc
+#      iceberg.jdbc-catalog.catalog-name=catalog
+#      iceberg.jdbc-catalog.driver-class=org.postgresql.Driver
+#      iceberg.jdbc-catalog.connection-url=jdbc:postgresql://${ENV:PG_HOST}:${ENV:PG_PORT}/catalog
+#      iceberg.jdbc-catalog.connection-user=${ENV:PG_USERNAME}
+#      iceberg.jdbc-catalog.connection-password=${ENV:PG_PASSWORD}
+#      iceberg.jdbc-catalog.default-warehouse-dir=s3://dp-stack-tf-os
+
+  coordinator:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+  worker:
+    additionalConfigFiles:
+      config.properties: |
+        internal-communication.shared-secret=123456
+        discovery.uri=http://trino.services.svc:8080
+        http-server.http.enabled=true
+        http-server.http.port=8080
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+  ingress:
+    enabled: true
+    className: traefik
+    annotations:
+      # Enable TLS with Let's Encrypt
+      traefik.ingress.kubernetes.io/router.tls.certresolver: "letsencrypt"
+    hosts: 
+      - host: trino.upcloud.playground.dataminded.cloud
+        paths:
+          - path: /
+            pathType: Prefix
+
+  accessControl:
+    type: properties
+    properties: |
+      access-control.name=opa
+      opa.policy.uri=http://opa-opa-kube-mgmt.opa.svc:8181/v1/data/trino/allow
