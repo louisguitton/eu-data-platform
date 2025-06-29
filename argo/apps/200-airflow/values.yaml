@@ -18,7 +18,13 @@ airflow:
         memory: 1024Mi
     service:
       type: ClusterIP
-
+    livenessProbe:
+      timeoutSeconds: 60
+      initialDelaySeconds: 60
+    startupProbe:
+      timeoutSeconds: 120
+      periodSeconds: 20
+      failureThreshold: 6
   workers:
     persistence:
       size: 2Gi
