@@ -1,10 +1,17 @@
 lakekeeper:
   catalog:
     image:
-      tag: latest-main
+      tag: v0.9.1
     extraEnvFrom:
       - secretRef:
           name: lakekeeper-custom-secrets #overwrite the external database credentials with our own settings
+    ingress:
+      enabled: true
+      host: lakekeeper.ovh.playground.dataminded.cloud
+      ingressClassName: traefik
+      annotations:
+        traefik.ingress.kubernetes.io/router.tls.certresolver: "letsencrypt"
+        traefik.ingress.kubernetes.io/router.tls: "true"
   postgresql:
     enabled: false
 

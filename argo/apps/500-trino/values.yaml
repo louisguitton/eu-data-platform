@@ -38,6 +38,10 @@ trino:
 #      iceberg.jdbc-catalog.default-warehouse-dir=s3://dp-stack-tf-os
 
   coordinator:
+    additionalConfigFiles:
+      config.properties: |
+        internal-communication.shared-secret=123456
+        http-server.process-forwarded=true
     resources:
       requests:
         cpu: 100m
@@ -50,6 +54,10 @@ trino:
         discovery.uri=http://trino.services.svc:8080
         http-server.http.enabled=true
         http-server.http.port=8080
+        http-server.authentication.oauth2.scopes=openid
+        http-server.authentication.oauth2.issuer=https://zitadel.ovh.playground.dataminded.cloud
+        http-server.authentication.oauth2.client-id=${ENV:OAUTH2_CLIENT_ID}
+        http-server.authentication.oauth2.client-secret=${ENV:OAUTH2_CLIENT_SECRET}
     resources:
       requests:
         cpu: 100m
@@ -60,6 +68,7 @@ trino:
     className: traefik
     annotations:
       # Enable TLS with Let's Encrypt
+      traefik.ingress.kubernetes.io/router.tls: "true"
       traefik.ingress.kubernetes.io/router.tls.certresolver: "letsencrypt"
     hosts: 
       - host: trino.ovh.playground.dataminded.cloud

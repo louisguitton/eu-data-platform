@@ -1,3 +1,5 @@
 **/.terraform
 **/.kubeconfig.yml
 **/terraform.tfstate*
+**/*.tfvars
+**/token.json
