@@ -10,7 +10,7 @@ traefik:
       entryPoints:
         - websecure
       # Define the matching rule for the dashboard route
-      matchRule: Host(`traefik.upcloud.playground.dataminded.cloud`)
+      matchRule: Host(`traefik.ovh.playground.dataminded.cloud`)
     tls:
       certResolver: letsencrypt
 
@@ -61,9 +61,10 @@ traefik:
     letsencrypt:
       acme:
         # ACME CA server to use
-        caServer: https://acme-v02.api.letsencrypt.org/directory
+        caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+#        caServer: https://acme-v02.api.letsencrypt.org/directory
         # Email address used for registration
-        email: robbert.hofman@dataminded.com
+        email: gergely.soti@dataminded.com
         # File or key used for certificates storage
         storage: /data/acme.json
         # HTTP challenge

@@ -96,3 +96,44 @@ resource "kubernetes_secret" "pg_credentials" {
 
   type = "Opaque"
 }
+
+resource "kubernetes_secret" "zitadel_db" {
+  metadata {
+    name = "zitadel-credentials"
+   namespace = kubernetes_namespace.services.metadata[0].name
+
+  }
+  //TODO: use TLS
+  data = { "config.yaml": <<EOF
+    Database:
+      Postgres:
+        Host: ${upcloud_managed_database_postgresql.this.service_host}
+        Port: ${upcloud_managed_database_postgresql.this.service_port}
+        Database: zitadel
+        User:
+          Username: ${upcloud_managed_database_postgresql.this.service_username}
+          Password: ${upcloud_managed_database_postgresql.this.service_password}
+          SSL:
+            Mode: prefer
+        Admin:
+          Username: ${upcloud_managed_database_postgresql.this.service_username}
+          Password: ${upcloud_managed_database_postgresql.this.service_password}
+          ExistingDatabase: defaultdb
+          SSL:
+            Mode: prefer
+  EOF
+  }
+  type = "Opaque"
+}
+
+# resource "kubernetes_secret" "db_certficate" {
+#   metadata {
+#     name      = "pg-certificate"
+#     namespace = kubernetes_namespace.services.metadata[0].name
+#   }
+#
+#   data = {
+#     "ca.crt" = upcloud_managed_database_postgresql.this.
+#   }
+#   type = "Opaque"
+# }

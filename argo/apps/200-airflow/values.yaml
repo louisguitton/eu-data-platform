@@ -42,7 +42,7 @@ airflow:
         traefik.ingress.kubernetes.io/router.tls: "true"
         # Backend service uses HTTP (Airflow webserver default)
         # traefik.ingress.kubernetes.io/service.scheme: http # Usually not needed if port is 80/8080
-      host: airflow.upcloud.playground.dataminded.cloud # Define the hostname
+      host: airflow.ovh.playground.dataminded.cloud # Define the hostname
       path: / # Root path
 
   dags:
@@ -51,7 +51,7 @@ airflow:
 
     gitSync:
       enabled: true
-      repo: "https://github.com/datamindedbe/eu-data-platform.git"  # Replace with your repo
+      repo: "https://github.com/gergelysotidm/eu-data-platform.git"  # Replace with your repo
       branch: "main"  # Or whatever branch you want
       subPath: "dags"  # Path within the repo where DAGs are stored
       depth: 1

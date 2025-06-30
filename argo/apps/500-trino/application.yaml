@@ -1,28 +1,31 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: vault
+  name: trino
   namespace: argocd
+  # Add finalizer to ensure that Helm release is deleted before the app
   finalizers:
     - argocd.argoproj.io/resources-finalizer # Use domain-qualified finalizer
 spec:
   project: default
   source:
     # Source is the Git repository containing this Application manifest and the wrapper chart
-    repoURL: https://github.com/datamindedbe/eu-data-platform.git # Ensure this is your repo URL
-    path: argo/apps/300-vault # Path to the wrapper chart directory within the Git repo
+    repoURL: https://github.com/gergelysotidm/eu-data-platform.git # Assuming the same repo
+    path: argo/apps/500-trino # Path to the Trino wrapper chart directory
     targetRevision: HEAD # Or your specific branch/tag
 
     # Helm configuration for the wrapper chart
     helm:
-      releaseName: vault
+      releaseName: trino # Helm release name
       # Values file is implicitly values.yaml within the source path
+      # valueFiles:
+      #  - values.yaml
   destination:
     server: https://kubernetes.default.svc
-    namespace: services # Deploy Vault into the services namespace
+    namespace: services # Deploy Trino into its own namespace
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true # Ensure the services namespace is created (if not already)
+      - CreateNamespace=true # Ensure the trino namespace is created
