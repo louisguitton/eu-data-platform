@@ -9,3 +9,11 @@ variable "pg_admin_user" {
 variable "pg_admin_password" {
   default = "changeme"
 }
+
+variable "obj_store_access_key" {
+  default = "changeme"
+}
+
+variable "obj_store_secret_key" {
+  default = "changeme"
+}

@@ -86,3 +86,36 @@ resource "kubernetes_secret" "zitadel_db" {
   }
   type = "Opaque"
 }
+
+resource "kubernetes_secret" "database_secrets" {
+  metadata {
+    name = "lakekeeper-custom-secrets"
+    namespace = "services"
+  }
+  data = {
+    ICEBERG_REST__PG_HOST_R=data.ovh_cloud_project_database.pgsqldb.endpoints[0].domain
+    ICEBERG_REST__PG_HOST_W=data.ovh_cloud_project_database.pgsqldb.endpoints[0].domain
+    ICEBERG_REST__PG_PORT=data.ovh_cloud_project_database.pgsqldb.endpoints[0].port
+    ICEBERG_REST__PG_PASSWORD=var.pg_admin_password
+    ICEBERG_REST__PG_DATABASE=ovh_cloud_project_database_database.lakekeeper_db.name
+    ICEBERG_REST__PG_USER=var.pg_admin_user
+    ICEBERG_REST__SECRETS_BACKEND="Postgres"
+    LAKEKEEPER__AUTHZ_BACKEND="allowall"
+  }
+}
+
+resource "kubernetes_secret" "pg_credentials" {
+  metadata {
+    name      = "pg-credentials"
+    namespace = data.kubernetes_namespace.services.metadata[0].name
+  }
+
+  data = {
+    USERNAME = var.pg_admin_user
+    PASSWORD = var.pg_admin_password
+    HOST     = data.ovh_cloud_project_database.pgsqldb.endpoints[0].domain
+    PORT     = data.ovh_cloud_project_database.pgsqldb.endpoints[0].port
+    URI      = data.ovh_cloud_project_database.pgsqldb.endpoints[0].uri
+  }
+  type = "Opaque"
+}
