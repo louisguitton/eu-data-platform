@@ -5,7 +5,7 @@ Make sure you have an OVH account.
 
 ## Getting started
 1. To set up terraform, go here
-https://www.ovh.com/auth/api/createToken?GET=/*&POST=/*&PUT=/*&DELETE=/*
+[url](https://www.ovh.com/auth/api/createToken?GET=/*&POST=/*&PUT=/*&DELETE=/*)
 
 and export the following env variables:
 ```
